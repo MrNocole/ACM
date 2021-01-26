@@ -1,4 +1,4 @@
-组合数（含逆元）
+//组合数（含逆元）
 ll qp(ll b ,ll p){
 	ll res = 1;
 	while (p){
@@ -21,4 +21,4 @@ ll C(ll n , ll k){
 	return res%mod;
 }
 
-C是入口，n是全集大小，k是要选出的数。
+//C是入口，n是全集大小，k是要选出的数。
