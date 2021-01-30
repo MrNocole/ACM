@@ -1,0 +1,30 @@
+int mark ;  //用以标记第几个节点
+int trie[maxn][2];
+
+void insert(int m , int w , int num){  //m-插入到第几个节点 ， 进行到第w位  ， 要插入的数字num
+    if (w<0)return ;    
+    int tmp = (num>>w)&1;     //num的第w位是否是1
+    if (!trie[m][tmp])trie[m][tmp]=++mark;  //如果这个节点还没有创建则创建节点（创建节点实际就是用现有节点标记下一个节点）
+    insert(trie[m][tmp],w-1,num);
+}
+
+int ask(int m, int w , int num){   //从第m个节点开始查找
+    if (w<0)return 0;    
+    int tmp = (num>>w)&1;       
+    if (trie[m][!tmp]) return ask(trie[m][!tmp],w-1,num)+(1<<w); //这是查找最大异或值，要使异或值最大即每次走相反方向
+    return ask(trie[m][tmp],w-1,num);   //没有相反方向的节点则走相同方向的
+}
+  //从数组里找两个数的最大异或值  题目链接https://ac.nowcoder.com/acm/problem/50993?&headNav=www  ac代码：https://ac.nowcoder.com/acm/contest/view-submission?submissionId=46615788&returnHomeType=1&uid=382300087
+int main(){
+    int n;
+    scanf("%d",&n);
+    int start = ++mark;
+    int tmp;
+    int ret = 0;
+    for (int i = 1 ; i <= n ; i ++){
+        scanf("%d",&tmp);
+        insert(start,31,tmp);
+        ret = max(ret,ask(start,31,tmp));
+    }
+    printf("%d",ret);
+}
