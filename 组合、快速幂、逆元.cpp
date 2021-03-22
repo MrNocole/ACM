@@ -2,8 +2,8 @@
 ll qp(ll b ,ll p){
 	ll res = 1;
 	while (p){
-		if (p%2)res=res*b%mod;
-		p /= 2;
+		if (p&1)res=res*b%mod;
+		p >>= 1;
 		b = (b*b)%mod;
 	}
 	return res;
