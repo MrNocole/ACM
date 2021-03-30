@@ -1,0 +1,24 @@
+//a 原数据  b 树状数组
+
+inline int lowbit(int x){
+  return x&-x;
+}
+//单点修改 b[idx]增加c
+int modify(int idx, int c){
+  for  (int i = idx ; i <= n ; i += lowbit(i)){
+    b[i] += c;
+  }
+}
+//初始化树状数组
+void init(){
+  for (int i = 1 ; i <= n ; i ++){
+    modify(i,a[i]);
+  }
+}
+//区间查询 [1,x]
+int query(int t){
+  int ans = 0;
+  for (int i = t ; i >= 1 ; i -= lowbit(i))ans += b[i];
+  return ans;
+}
+
