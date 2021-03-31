@@ -1,5 +1,6 @@
 //a 原数据  b 树状数组
 
+//单点修改 区间查询
 inline int lowbit(int x){
   return x&-x;
 }
@@ -22,3 +23,26 @@ int query(int t){
   return ans;
 }
 
+//区间修改单点查询
+//a 原数据 b 差分数组 c 差分树状数组
+//exmp：a = 1 5  4  2 3
+//      b = 1 4 -1 -2 1
+//      c = 1 5 -1  2 1
+//给[2,4]+2
+//      a = 1 7  6  4  3
+//      b = 1 6 -1 -2 -1
+//      c = 1 7 -1  4 -1
+//只在差分数组中left和right+1位置分别+x和-x，对树状数组left和right+1位置做单点修改即可实现区间修改，调用query直接求单点
+int lowbit(int x){
+    return x&-x;
+}
+
+void modify(int idx,int x){
+    for (int i = idx ; i <= n ; i += lowbit(i)) c[i] += x;
+}
+
+ll query(int t) {
+    ll ans = 0;
+    for (int i = t ; i >= 1 ; i -= lowbit(i)) ans += c[i];
+    return ans;
+}
