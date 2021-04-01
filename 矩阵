@@ -1,0 +1,100 @@
+//斐波那契
+struct matrix
+{
+    ll a1, a2, b1, b2;
+    matrix(ll a1, ll a2, ll b1, ll b2) : a1(a1), a2(a2), b1(b1), b2(b2) {}
+    matrix operator*(const matrix &y)
+    {
+        matrix ans((a1 * y.a1 + a2 * y.b1) % MOD,
+                   (a1 * y.a2 + a2 * y.b2) % MOD,
+                   (b1 * y.a1 + b2 * y.b1) % MOD,
+                   (b1 * y.a2 + b2 * y.b2) % MOD);
+        return ans;
+    }
+};
+
+matrix qpow(matrix a, ll n)
+{
+    matrix ans(1, 0, 0, 1); //单位矩阵
+    while (n)
+    {
+        if (n & 1)
+            ans = ans * a;
+        a = a * a;
+        n >>= 1;
+    }
+    return ans;
+}
+
+
+
+const int N=9;
+struct Matrix{///矩阵结构体 
+    ll matrix[N][N];
+};
+ 
+const int mod = 1e9 + 7;
+ 
+void init(Matrix &res)///初始化为单位矩阵 
+{
+    memset(res.matrix,0,sizeof(res.matrix));
+    for(int i=0;i<N;i++)
+        res.matrix[i][i]=1;
+}
+Matrix multiplicative(Matrix a,Matrix b)///矩阵乘法
+{
+    Matrix res;
+    memset(res.matrix,0,sizeof(res.matrix));
+    for(int i = 0 ; i < N ; i++){
+        for(int j = 0 ; j < N ; j++){
+            for(int k = 0 ; k < N ; k++){
+                res.matrix[i][j] += a.matrix[i][k]*b.matrix[k][j];
+                res.matrix[i][j] %= mod;
+            }
+        }
+    }
+    return res;
+}
+Matrix Pow(Matrix mx,ll m)///矩阵快速幂 
+{
+    Matrix res,base=mx;
+    init(res);
+    while(m)
+    {
+        if(m&1)
+            res=multiplicative(res,base);
+        base=multiplicative(base,base);
+        m>>=1;
+    }
+    return res;
+}
+
+
+
+
+typedef vector<ll> vec;
+typedef vector<vec> mat;
+mat mul(mat &a , mat &b){
+    mat c(a.size() , vec(b[0].size()));
+    for (int i = 0 ;  i < a.size() ; i ++){
+        for (int k = 0 ; k < b.size() ; k ++){
+            for (int j = 0 ; j < b[0].size() ; j ++){
+                c[i][j] = (c[i][j] + a[i][k]*b[k][j]) % mod;
+            }
+        }
+    }
+    return c;
+}
+
+mat pow(mat a, ll n){
+    mat b(a.size() , vec(a.size()));
+    for (int i = 0 ; i < a.size() ; i ++){
+        b[i][i] = 1;
+    }
+    while (n){
+        if (n&1) b = mul(b,a);
+        a = mul(a,a);
+        n >>= 1;
+    }
+    return b;
+}
