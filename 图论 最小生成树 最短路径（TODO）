@@ -27,13 +27,47 @@ dist[y] = min(dist[y], dist[x] + e[x][y]);//这里的e[x][y]表示x、y之间的
 
 struct Edge{int from , to , val}edge[E];
 int d[V] , v , e;
+//要判断负边就用for循环v次 替代while，第v次依然更新了则存在负边
 void ballmanford(int s){
-  for (int i = 0 ; i < v ; i ++) d[i] = INF;
-  d[s] = 0;
-  while (true){
-    bool update = false;
-    for (int i = 0 ; i < e ; i ++){
-      
+    for (int i = 0 ; i < v ; i ++) d[i] = INF;
+    d[s] = 0;
+    while (true){
+        bool update = false;
+        for (int i = 0 ; i < e ; i ++){
+            Edge e = edge[i];
+            if (d[e.from] != INF && d[e.to] > d[e.from] + e.val) {
+                d[e.to] = d[e.from] + e.val;
+                update = true;
+            }
+        }
+        if (!update) break;
     }
-  }
+}
+
+
+//Dijkstra
+const int INF = 1e9+7;
+const int E = 1000;
+const int V = 1000;
+struct Edge{int to , val;};
+typedef pair<int ,int >P; // first 是最短距离，second 是顶点编号
+int v , e , d[V];
+vector<Edge> g[V];
+void dijkstra(int s){
+    priority_queue<P,vector<P>,greater<P> > que;
+    fill(d,d+v,INF);
+    d[s] = 0;
+    que.push(P(0,s));
+    while (!que.empty()){
+        P p = que.top() ; que.pop();
+        int v = p.second;
+        if (d[v] < p.first) continue;
+        for (int i = 0 ; i < g[v].size() ; i ++){
+            Edge e = g[v][i];
+            if (d[e.to] > d[v] + e.val){
+                d[e.to] = d[v] + e.val;
+                que.push(P(d[e.to] , e.to));
+            }
+        }
+    }
 }
