@@ -1,1 +1,39 @@
 
+//Floyd算法 邻接表
+int dist[400][400];
+void Floyd(int n)
+{
+    for (int k = 1; k <= n; ++k)
+        for (int i = 1; i <= n; ++i)
+            for (int j = 1; j <= n; ++j)
+                dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
+}
+//Floyd初始化
+memset(dist, 63, sizeof(dist));
+//利用memset的特性，先把所有距离初始化为0x3f3f3f3f，注意这个数的两倍小于32位和64位机器上的INT_MAX
+for (int i = 1; i <= n; ++i)
+    dist[i][i] = 0;
+for (int i = 0; i < m; ++i)
+{
+    int u, v, w;
+    scanf("%d%d%d", &u, &v, &w);
+    dist[u][v] = w;
+}
+
+
+//Ballman-Ford算法
+//松弛操作
+dist[y] = min(dist[y], dist[x] + e[x][y]);//这里的e[x][y]表示x、y之间的距离，具体形式可能根据存图方法不同而改变
+
+struct Edge{int from , to , val}edge[E];
+int d[V] , v , e;
+void ballmanford(int s){
+  for (int i = 0 ; i < v ; i ++) d[i] = INF;
+  d[s] = 0;
+  while (true){
+    bool update = false;
+    for (int i = 0 ; i < e ; i ++){
+      
+    }
+  }
+}
