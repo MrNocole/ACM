@@ -1,0 +1,34 @@
+const ll INF = 1e9+7;
+const int N = 210;
+int  n , m , mp[210][210] , p[210] , vis[210];
+bool match(int i){
+    for (int j = 1 ; j <= m ; j ++){
+        if (mp[i][j] && !vis[j]){
+            vis[j] = 1;
+            if (p[j] == 0 || match(p[j])){
+                p[j] = i;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+int hungarian(){
+    int cnt = 0;
+    for (int i = 1 ; i <= n ; i ++){
+        memset(vis,0,sizeof vis);
+        if (match(i))cnt++;
+    }
+    return cnt;
+}
+//示例
+int main(){
+    scanf("%d%d",&n,&m);
+    for (int i = 1 ; i <= n ; i ++){
+        for (int j = 1 ; j <= m ; j ++){
+            printf("%d ",mp[i][j]);
+        }
+        printf("\n");
+    }
+    printf("%d\n",hungarian());
+}
