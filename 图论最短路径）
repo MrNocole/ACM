@@ -1,4 +1,8 @@
-
+/*
+ *
+ *最短路算法
+ *
+ */
 //Floyd算法 邻接表
 int dist[400][400];
 void Floyd(int n)
