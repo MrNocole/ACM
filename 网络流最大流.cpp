@@ -40,67 +40,78 @@ int max_flow (int s , int t){
 
 
 //Dinic
-const ll INF = 1e9+7;
-const int N = 11000 , E = 210000;
-int n , m , s , t;
-ll cnt = 1 , first[N] , nxt[E] , to[E] , val[E];
-
-inline void addEdge(int u , int v , ll w){
-    to[++cnt] = v;
-    val[cnt] = w;
-    nxt[cnt] = first[u];
-    first[u] = cnt;
-}
-int dep[N] , q[N] , l ,r;
-bool bfs(){
-    memset(dep,0,sizeof dep);
-    q[l=r=1] = s;
-    dep[s] = 1;
-    while (l <= r){
-        int u = q[l++];
-        for (int p = first[u] ; p ; p = nxt[p]){
-            int v = to[p];
-            if (val[p] and !dep[v]){
-                dep[v] = dep[u] + 1;
-                q[++r] = v;
+struct Dinic
+{
+    struct Edge
+    {
+        int from, to, cap, flow;
+    };
+    int s, t; //节点数,边数,源点编号,汇点编号
+    vector<Edge> edges; //边表,edges[e]和edges[e^1]互为反向弧
+    vector<int> G[M]; //邻接表,G[i][j]表示节点i的第j条边在e中的序号
+    bool vis[M]; //bfs用
+    int d[M]; //从起点到i的距离
+    int cur[M]; //当前弧下标
+    void addEdge(int from, int to, int cap)
+    {
+        edges.push_back({from, to, cap, 0});
+        edges.push_back({to, from, 0, 0});
+        G[from].push_back(edges.size() - 2);
+        G[to].push_back(edges.size() - 1);
+    }
+    bool BFS()
+    {
+        memset(vis, 0, sizeof(vis));
+        queue<int> q;
+        q.push(s);
+        d[s] = 0;
+        vis[s] = 1;
+        while(!q.empty())
+        {
+            int u = q.front();
+            q.pop();
+            for(int id : G[u])
+            {
+                Edge &e = edges[id];
+                if(!vis[e.to] && e.cap > e.flow)
+                {
+                    vis[e.to] = 1;
+                    d[e.to] = d[u] + 1;
+                    q.push(e.to);
+                }
             }
         }
+        return vis[t];
     }
-    return dep[t];
-}
-ll dfs(int u , ll in){
-    if (u==t)return in;
-    ll out = 0;
-    for (int p = first[u]  ; p and in ; p = nxt[p]) {
-        int v = to[p];
-        if (val[p] and dep[v] == dep[u] + 1){
-            ll res = dfs(v,min(val[p],in));
-            val[p] -= res;
-            val[p^1] += res;
-            in -= res;
-            out += res;
+    int DFS(int u, int a)
+    {
+        if(u == t || a == 0) return a;
+        int flow = 0, f;
+        for(int &i = cur[u]; i < (int)G[u].size(); ++i)
+        {
+            Edge &e = edges[G[u][i]];
+            if(d[u] + 1 == d[e.to] && 
+                (f = DFS(e.to, min(a, e.cap - e.flow))) > 0)
+            {
+                e.flow += f;
+                edges[G[u][i] ^ 1].flow -= f;
+                flow += f;
+                a -= f;
+                if(a == 0) break;
+            }
         }
+        return flow;
     }
-    if (out == 0){
-        dep[u] = 0;
+    int maxflow(int _s, int _t)
+    {
+        s = _s;
+        t = _t;
+        int flow = 0;
+        while(BFS())
+        {
+            memset(cur, 0, sizeof(cur));
+            flow += DFS(s, INF);
+        }
+        return flow;
     }
-    return out;
-}
-
-ll max_flow(){
-    ll ret = 0;
-    while (bfs())ret+=dfs(s,std::numeric_limits<ll>::max());
-    return ret;
-}
-//建边 要建双向边
-int main(){
-    scanf("%d%d%d%d",&n,&m,&s,&t);
-    for (int i = 1 ; i <= m ; i ++){
-        int u , v;
-        ll w;
-        scanf("%d%d%lld",&u,&v,&w);
-        addEdge(u,v,w);
-        addEdge(v,u,0);
-    }
-    printf("%lld\n",max_flow());
-}
+}dinic;
