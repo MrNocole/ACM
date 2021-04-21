@@ -1,3 +1,5 @@
+
+//Korasaju算法
 const int MAX_V = 1000;
 int V; //顶点数
 vector<int> G[MAX_V]; //图的邻接图
@@ -35,4 +37,41 @@ int scc(){
         if (!used[vs[i]]) rdfs(vs[i],k++);
     }
     return k;
+}
+
+
+//Tarjan 算法
+const int max_v = 10000;
+vector<int> g[max_v];
+//low是表示强联通分量的头
+int tot , low[max_v] , time[max_v] , vis[max_v] , v , m;
+
+void add_edge(int f ,int t){
+    g[f].push_back(t);
+}
+
+void dfs(int idx){
+    if (low[idx] == 0) {
+        low[idx] = time[idx] = ++tot;
+        vis[idx] = 1;
+    }
+    for (int i : g[idx]){
+        if (vis[i]) {
+            low[idx] = min(low[idx],time[i]);
+        } else {
+            dfs(i);
+            low[idx] = low[i];
+        }
+    }
+}
+void tarjan(){
+    for (int i = 1 ; i <= v ; i ++){
+        if (!vis[i]) {
+            low[i] = time[i] = ++tot;
+            vis[i] = 1;
+            for (int j : g[i]){
+                dfs(j);
+            }
+        }
+    }
 }
