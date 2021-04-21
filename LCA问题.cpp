@@ -35,7 +35,10 @@ void dfs(int v ,int p , int d){
         if (g[v][i] != p)dfs(g[v][i],v,d+1);
     }
 }
+
+
 //预处理出parent和depth数组
+//倍增的做法
 void init(){
     dfs(root,-1,0);
     for (int k = 0 ; k +1 < max_log_v ; k ++){
