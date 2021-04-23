@@ -65,3 +65,88 @@ int lca(int u , int v){
     return parent[0][u];
 }
 
+//Tarjan离线算法
+using namespace std;
+const int MAXN = 10005;
+vector<int> vec[MAXN];
+bool vis[MAXN];
+int per[MAXN],head[MAXN],in_num[MAXN];
+//in_num统计每个点的入度，为了求根节点，per和并查集中的作用相同，head配合结构体前向星
+int cnt,n,m;
+ 
+struct Node
+{
+    int c,next;
+}edge[MAXN];
+ 
+void Init()
+{
+    cnt = 0;
+    memset(in_num,0,sizeof(in_num));
+    memset(head,-1,sizeof(head));
+    memset(vis,0,sizeof(vis));
+    for(int i =1;i <= n;i++)
+    {
+        vec[i].clear();
+        per[i] = i;
+    }
+}
+ 
+void add(int x,int y)
+{
+    edge[++cnt].next = head[x];
+    edge[cnt].c = y;
+    head[x] = cnt;
+}
+ 
+int Find(int x)
+{
+    if(per[x] != x)
+        per[x] = Find(per[x]);
+    return per[x];
+}
+ 
+void Union(int x,int y)
+{
+    x = Find(x);y = Find(y);
+    if(x == y)
+        return ;
+    per[x] = y;
+}
+ 
+void Tarjan(int x)
+{
+    for(int i = head[x];i != -1; i =edge[i].next)
+    {
+        int v = edge[i].c;
+        Tarjan(v);
+        Union(v,x);//首先要一直遍历的叶子节点
+    }
+    vis[x] = 1; // 当这个节点的所有子节点都已经遍历到了，就标记这个节点
+    for(int i = 0;i < vec[x].size();i ++)
+        if(vis[vec[x][i]])//然后在问题中寻找是否有关于这两个节点都已经标记过的了
+            printf("%d 和 %d 的LAC是 %d\n",x,vec[x][i],Find(vec[x][i]));
+}
+int main()
+{
+    int x,y;
+    scanf("%d%d",&n,&m);
+    Init();
+    for(int i = 1;i < n;i++)
+    {
+        scanf("%d%d",&x,&y);
+        add(x,y);
+        in_num[y] ++;
+    }
+    for(int i = 0;i < m;i ++)
+    {
+        scanf("%d%d",&x,&y);
+        vec[x].push_back(y);
+        vec[y].push_back(x);
+    }
+    int root;
+    for(int i = 1;i <= n;i ++)
+        if(in_num[i] == 0)
+            root = i;
+    Tarjan(root);
+}
