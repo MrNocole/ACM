@@ -48,6 +48,29 @@ void ballmanford(int s){
     }
 }
 
+//spfa
+bool inq[300100];
+void spfa(){
+    fill(d,d+n+5,-INF);
+    d[1] = 0;
+    inq[1] = true;
+    queue<int> q;
+    q.push(1);
+    while (!q.empty()){
+        int tp = q.front();  q.pop();
+        inq[tp] = false;
+        for (int i = 0 ; i < g[tp].size() ; i ++){
+            Edge e = g[tp][i];
+            if (d[e.t] < d[tp] + e.v){
+                d[e.t] = d[tp] + e.v;
+                if (inq[e.t] == false){
+                    q.push(e.t);
+                    inq[e.t] = true;
+                }
+            }
+        }
+    }
+}
 
 //Dijkstra
 const int INF = 1e9+7;
