@@ -40,38 +40,36 @@ int scc(){
 }
 
 
-//Tarjan 算法
-const int max_v = 10000;
-vector<int> g[max_v];
-//low是表示强联通分量的头
-int tot , low[max_v] , time[max_v] , vis[max_v] , v , m;
 
-void add_edge(int f ,int t){
-    g[f].push_back(t);
-}
-
-void dfs(int idx){
-    if (low[idx] == 0) {
-        low[idx] = time[idx] = ++tot;
-        vis[idx] = 1;
+//tarjan
+void dfs(int u){
+    stack[top++] = u;
+    low[u] = num[u] = ++cnt;
+    for (int i = 0 ; i < g[u].size() ; i ++){
+        int v = g[u][i];
+        if (!num[v]) {
+            dfs(v);
+            low[u] = min(low[v],low[u]);
+        } else if (!sccno[v]) {
+            low[u] = min(low[v],low[u]);
+        }
     }
-    for (int i : g[idx]){
-        if (vis[i]) {
-            low[idx] = min(low[idx],time[i]);
-        } else {
-            dfs(i);
-            low[idx] = low[i];
+    if (low[u]==num[u]) {
+        cnt ++;
+        while (1) {
+            int v = stack[--top];
+            sccno[v] = cnt;
+            if (u==v)break;
         }
     }
 }
-void tarjan(){
-    for (int i = 1 ; i <= v ; i ++){
-        if (!vis[i]) {
-            low[i] = time[i] = ++tot;
-            vis[i] = 1;
-            for (int j : g[i]){
-                dfs(j);
-            }
-        }
+
+void tarjan(int n){
+    cnt = top = dfn = 0;
+    memset(sccno,0,sizeof sccno);
+    memset(num,1,sizeof num);
+    memset(low,0,sizeof low);
+    for (int i = 1 ; i <= n ; i ++){
+        if (num[i]) dfs(i);
     }
 }
