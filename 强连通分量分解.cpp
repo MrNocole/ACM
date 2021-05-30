@@ -41,35 +41,44 @@ int scc(){
 
 
 
-//tarjan
+struct Edge
+{
+    int t , nxt;
+}edges[N];
+int head[N] , cnt , scnt , n , m , num[N] , low[N] , dfn , innode[N] , sccno[N] , vis[N];
+stack<int> st;
+map<int,int> mp;
+inline void addedge(int s , int t){
+    edges[cnt].t = t;
+    edges[cnt].nxt = head[s];
+    head[s] = cnt ++;
+}
+
 void dfs(int u){
-    stack[top++] = u;
-    low[u] = num[u] = ++cnt;
-    for (int i = 0 ; i < g[u].size() ; i ++){
-        int v = g[u][i];
+    st.push(u);
+    num[u] = low[u] = ++dfn;
+    for (int i = head[u] ; ~i ; i = edges[i].nxt) {
+        int v = edges[i].t;
         if (!num[v]) {
             dfs(v);
             low[u] = min(low[v],low[u]);
-        } else if (!sccno[v]) {
+        } else if (!sccno[v]){
             low[u] = min(low[v],low[u]);
         }
     }
-    if (low[u]==num[u]) {
-        cnt ++;
+    if (low[u] == num[u]) {
+        scnt ++;
         while (1) {
-            int v = stack[--top];
-            sccno[v] = cnt;
-            if (u==v)break;
+            int crt = st.top();
+            st.pop();
+            sccno[crt] = scnt;
+            if (crt == u) break;
         }
     }
 }
 
-void tarjan(int n){
-    cnt = top = dfn = 0;
-    memset(sccno,0,sizeof sccno);
-    memset(num,1,sizeof num);
-    memset(low,0,sizeof low);
+void tarjan() {
     for (int i = 1 ; i <= n ; i ++){
-        if (num[i]) dfs(i);
+        if (!num[i]) dfs(i);
     }
 }
