@@ -1,1 +1,33 @@
 
+//区间最大值线段树 update(1,1,n,left,right,num)
+int tr[N<<2] , lz[N<<2];
+void push_down(int idx , int s , int t) {
+    tr[idx*2] += lz[idx];
+    tr[idx*2+1] += lz[idx];
+    lz[idx*2] += lz[idx];
+    lz[idx*2+1] += lz[idx];
+    lz[idx] = 0;
+}
+void update (int idx ,int s , int t , int l , int r , int x) {
+    if (l <= s && r >= t) {
+        tr[idx] += x;
+        lz[idx] += x;
+        return;
+    }
+    if (lz[idx]!=0) push_down(idx,s,t);
+    int m = (s+t)/2;
+    if (l <= m) update(idx*2,s,m,l,r,x);
+    if (r > m) update(idx*2+1,m+1,t,l,r,x);
+    tr[idx] = max(tr[idx*2],tr[idx*2+1]);
+}
+int query(int idx ,int s , int t ,int l , int r) {
+    if (l <= s && r >= t) {
+        return tr[idx];
+    }
+    if (lz[idx]!=0) push_down(idx,s,t);
+    int m = (s+t)/2;
+    int res = 0;
+    if (l <= m) res = max(res,query(idx*2,s,m,l,r));
+    if (r > m) res = max(res,query(idx*2+1,m+1,t,l,r));
+    return res;
+}
